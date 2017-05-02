@@ -1,69 +1,76 @@
 #ifndef HASH_H
 #define HASH_H
 
-/******************************************************
-  *            			 HASH    		 			  *
-  *****************************************************/
+#include <stdbool.h>
+#include <stddef.h>
+
+// Los structs deben llamarse "hash" y "hash_iter".
+struct hash;
+struct hash_iter;
 
 typedef struct hash hash_t;
 typedef struct hash_iter hash_iter_t;
+
+// tipo de función para destruir dato
 typedef void (*hash_destruir_dato_t)(void *);
 
-/******************************************************
-  *             PRIMITIVAS DEL HASH 	    		  *
-  *****************************************************/
-
-
-// Pre: debe existir una funcion de destruccion, asi el hash sabe como destruir el dato previo.
-//Post: devuelve una tabla de hash, en caso contario devuelve NULL;
+/* Crea el hash
+ */
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato);
 
-//Pre: hash creado
-//Post: guarda en el hash el dato, si la clave ya existe el nuevo dato debe ser remplazado
-//en la posicion donde esta la misma clave. Si la clave no existe se debe guardar el dato
-//en una posicion con el estado vacio y cambia el estado vacio a ocupado. 
-//Si pudo guardar el dato devuelve true en caso contario devuelve false.
+/* Guarda un elemento en el hash, si la clave ya se encuentra en la
+ * estructura, la reemplaza. De no poder guardarlo devuelve false.
+ * Pre: La estructura hash fue inicializada
+ * Post: Se almacenó el par (clave, dato)
+ */
 bool hash_guardar(hash_t *hash, const char *clave, void *dato);
 
-//Pre: hash creado
-//Post: si la clave pertenece al hash, devuelvo el dato y reemplazo el estado a borrado. Si la clave
-//no existe devuelvo NULL:
+/* Borra un elemento del hash y devuelve el dato asociado.  Devuelve
+ * NULL si el dato no estaba.
+ * Pre: La estructura hash fue inicializada
+ * Post: El elemento fue borrado de la estructura y se lo devolvió,
+ * en el caso de que estuviera guardado.
+ */
 void *hash_borrar(hash_t *hash, const char *clave);
 
-//Pre: hash creado
-//Post: se busca el dato segun la clave y lo devuelve. Si el dato no existe
-//devuelve NULL:
+/* Obtiene el valor de un elemento del hash, si la clave no se encuentra
+ * devuelve NULL.
+ * Pre: La estructura hash fue inicializada
+ */
 void *hash_obtener(const hash_t *hash, const char *clave);
 
-//Pre: hash creado
-//Post: se fija si existe la clave en el hash, para eso busca la posicion con la funcion de hash
-//y va comparando hasta encontrar un lugar vacio. Si encontro la clave devuelve true, en caso contario
-//devuelve false.
+/* Determina si clave pertenece o no al hash.
+ * Pre: La estructura hash fue inicializada
+ */
 bool hash_pertenece(const hash_t *hash, const char *clave);
 
-//Pre: hash creado
-//Post: devuelve la cantidad de claves que hay en la tabla
+/* Devuelve la cantidad de elementos del hash.
+ * Pre: La estructura hash fue inicializada
+ */
 size_t hash_cantidad(const hash_t *hash);
 
-//Pre: hash creado
-//Post: elimina el hash, destruyendo todos los datos de la tabla y liberando la memoria.
+/* Destruye la estructura liberando la memoria pedida y llamando a la función
+ * destruir para cada par (clave, dato).
+ * Pre: La estructura hash fue inicializada
+ * Post: La estructura hash fue destruida
+ */
 void hash_destruir(hash_t *hash);
 
+/* Iterador del hash */
 
-
-/******************************************************
-  *             PRIMITIVAS DE ITERACION      		  *
-  *****************************************************/
-
+// Crea iterador
 hash_iter_t *hash_iter_crear(const hash_t *hash);
 
+// Avanza iterador
 bool hash_iter_avanzar(hash_iter_t *iter);
 
+// Devuelve clave actual, esa clave no se puede modificar ni liberar.
 const char *hash_iter_ver_actual(const hash_iter_t *iter);
 
+// Comprueba si terminó la iteración
 bool hash_iter_al_final(const hash_iter_t *iter);
 
+// Destruye iterador
 void hash_iter_destruir(hash_iter_t* iter);
 
-
-#endif
+#endif // HASH_H
