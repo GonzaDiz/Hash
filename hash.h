@@ -1,6 +1,9 @@
 #ifndef HASH_H
 #define HASH_H
 
+/******************************************************
+  *            			 HASH    		 			  *
+  *****************************************************/
 
 typedef struct hash hash_t;
 typedef struct hash_iter hash_iter_t;
