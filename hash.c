@@ -20,6 +20,12 @@ struct hash{
 	campo_hash_t* tabla;
 	hash_destruir_dato_t destructor;
 };
+
+struct hash_iter{
+	size_t posicionActual;
+	size_t recorridos;
+	const hash_t* hash;
+};
  /******************************************************
    *                  HASHING			 	    	   *
   *****************************************************/
@@ -69,8 +75,24 @@ size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave)
 	return posicion;
 }
 
+size_t obtener_posicion_ocupada(const hash_t* hash, size_t posicion){
+	while (hash->tabla[posicion].estado !=OCUPADO && (posicion < hash->tam)){
+		posicion++;
+	}
+	return posicion;
+}
+
+/*hash_t *hash_redimensionar(hash_t *hash,size_t tam_nuevo){
+	campo_hash_t* tabla = crear_tabla(tam_nuevo);
+}*/
+
  /******************************************************
    *             PRIMITIVAS DEL HASH 	    		   *
+  *****************************************************/
+
+
+ /******************************************************
+   *             PRIMITIVAS HASH   		    		   *
   *****************************************************/
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
@@ -153,7 +175,6 @@ void *hash_obtener(const hash_t *hash, const char *clave){
 }
 
 bool hash_pertenece(const hash_t *hash, const char *clave){
-	//return hash_obtener(hash,clave);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
 	if (hash->tabla[posicion].estado != OCUPADO) return false;
 	return true;
@@ -169,3 +190,36 @@ void hash_destruir(hash_t *hash){
 	free(hash);
 }
 
+ /******************************************************
+   *             PRIMITIVAS ITERADOR 	    		   *
+  *****************************************************/
+
+hash_iter_t *hash_iter_crear(const hash_t *hash){
+	hash_iter_t* iter = malloc(sizeof(hash_iter_t));
+	if (iter == NULL) return NULL;
+	iter->posicionActual = obtener_posicion_ocupada(hash,0);
+	iter->recorridos = 0;
+	iter->hash = hash;
+	return iter;
+}
+
+const char *hash_iter_ver_actual(const hash_iter_t *iter){
+	if (hash_iter_al_final(iter)) return NULL;
+	return iter->hash->tabla[iter->posicionActual].clave;
+}
+
+bool hash_iter_al_final(const hash_iter_t *iter){
+	if (iter->recorridos == iter->hash->cantidad) return true;
+	return false;
+}
+
+bool hash_iter_avanzar(hash_iter_t *iter){
+	if (hash_iter_al_final(iter)) return false;
+	iter->posicionActual = obtener_posicion_ocupada(iter->hash,iter->posicionActual +1);
+	iter->recorridos++;
+	return true;
+}
+
+void hash_iter_destruir(hash_iter_t* iter){
+	free(iter);
+}
