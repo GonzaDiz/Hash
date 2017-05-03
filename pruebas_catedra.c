@@ -30,18 +30,18 @@ static void prueba_crear_hash_vacio()
     hash_destruir(hash);
 }
 
-// static void prueba_iterar_hash_vacio()
-// {
-//     hash_t* hash = hash_crear(NULL);
-//     hash_iter_t* iter = hash_iter_crear(hash);
-//     print_test("Prueba hash iter crear iterador hash vacio", iter);
-//     print_test("Prueba hash iter esta al final", hash_iter_al_final(iter));
-//     print_test("Prueba hash iter avanzar es false", !hash_iter_avanzar(iter));
-//     print_test("Prueba hash iter ver actual es NULL", !hash_iter_ver_actual(iter));
+ static void prueba_iterar_hash_vacio()
+ {
+     hash_t* hash = hash_crear(NULL);
+     hash_iter_t* iter = hash_iter_crear(hash);
+     print_test("Prueba hash iter crear iterador hash vacio", iter);
+     print_test("Prueba hash iter esta al final", hash_iter_al_final(iter));
+     print_test("Prueba hash iter avanzar es false", !hash_iter_avanzar(iter));
+     print_test("Prueba hash iter ver actual es NULL", !hash_iter_ver_actual(iter));
 
-//     hash_iter_destruir(iter);
-//     hash_destruir(hash);
-// }
+    hash_iter_destruir(iter);
+    hash_destruir(hash);
+}
 
 static void prueba_hash_insertar()
 {
@@ -51,7 +51,7 @@ static void prueba_hash_insertar()
     char *clave2 = "gato", *valor2 = "miau";
     char *clave3 = "vaca", *valor3 = "mu";
 
-    /* Inserta 1 valor y luego lo borra */
+    //Inserta 1 valor y luego lo borra 
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1));
     print_test("Prueba hash la cantidad de elementos es 1", hash_cantidad(hash) == 1);
     print_test("Prueba hash obtener clave1 es valor1", hash_obtener(hash, clave1) == valor1);
@@ -60,7 +60,7 @@ static void prueba_hash_insertar()
     print_test("Prueba hash borrar clave1, es valor1", hash_borrar(hash, clave1) == valor1);
     print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
 
-    /* Inserta otros 2 valores y no los borra (se destruyen con el hash) */
+    //Inserta otros 2 valores y no los borra (se destruyen con el hash) 
     print_test("Prueba hash insertar clave2", hash_guardar(hash, clave2, valor2));
     print_test("Prueba hash la cantidad de elementos es 1", hash_cantidad(hash) == 1);
     print_test("Prueba hash obtener clave2 es valor2", hash_obtener(hash, clave2) == valor2);
@@ -83,7 +83,7 @@ static void prueba_hash_reemplazar()
     char *clave1 = "perro", *valor1a = "guau", *valor1b = "warf";
     char *clave2 = "gato", *valor2a = "miau", *valor2b = "meaow";
 
-    /* Inserta 2 valores y luego los reemplaza */
+    // Inserta 2 valores y luego los reemplaza 
     printf("\nINSERTA 2 VALORES Y LUEGO LOS REEMPLAZA\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1a));
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
@@ -111,13 +111,13 @@ static void prueba_hash_reemplazar_con_destruir()
     char *clave1 = "perro", *valor1a, *valor1b;
     char *clave2 = "gato", *valor2a, *valor2b;
 
-    /* Pide memoria para 4 valores */
+    //Pide memoria para 4 valores 
     valor1a = malloc(10 * sizeof(char));
     valor1b = malloc(10 * sizeof(char));
     valor2a = malloc(10 * sizeof(char));
     valor2b = malloc(10 * sizeof(char));
 
-    /* Inserta 2 valores y luego los reemplaza (debe liberar lo que reemplaza) */
+    // Inserta 2 valores y luego los reemplaza (debe liberar lo que reemplaza) 
     printf("INSERTA 2 VALORES Y LUEGO LOS REEMPLAZA (DEBE LIBERAR LO QUE REEMPLAZA)\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1a));
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
@@ -135,7 +135,7 @@ static void prueba_hash_reemplazar_con_destruir()
     print_test("Prueba hash obtener clave2 es valor2b", hash_obtener(hash, clave2) == valor2b);
     print_test("Prueba hash la cantidad de elementos es 2", hash_cantidad(hash) == 2);
 
-    /* Se destruye el hash (se debe liberar lo que quedó dentro) */
+    // Se destruye el hash (se debe liberar lo que quedó dentro) 
     hash_destruir(hash);
 }
 
@@ -147,13 +147,13 @@ static void prueba_hash_borrar()
     char *clave2 = "gato", *valor2 = "miau";
     char *clave3 = "vaca", *valor3 = "mu";
 
-    /* Inserta 3 valores y luego los borra */
+    // Inserta 3 valores y luego los borra 
     printf("INSERTA 3 VALORES Y LUEGO LOS BORRA\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1));
     print_test("Prueba hash insertar clave2", hash_guardar(hash, clave2, valor2));
     print_test("Prueba hash insertar clave3", hash_guardar(hash, clave3, valor3));
 
-    /* Al borrar cada elemento comprueba que ya no está pero los otros sí. */
+    // Al borrar cada elemento comprueba que ya no está pero los otros sí. 
     print_test("Prueba hash pertenece clave3, es verdadero", hash_pertenece(hash, clave3));
     print_test("Prueba hash borrar clave3, es valor3", hash_borrar(hash, clave3) == valor3);
     print_test("Prueba hash borrar clave3, es NULL", !hash_borrar(hash, clave3));
@@ -200,7 +200,7 @@ static void prueba_hash_valor_null()
 
     char *clave = "", *valor = NULL;
 
-    /* Inserta 1 valor y luego lo borra */
+    // Inserta 1 valor y luego lo borra 
     printf("PRUEBA HASH VALOR NULL\n");
     print_test("Prueba hash insertar clave vacia valor NULL", hash_guardar(hash, clave, valor));
     print_test("Prueba hash la cantidad de elementos es 1", hash_cantidad(hash) == 1);
@@ -272,66 +272,66 @@ static void prueba_hash_valor_null()
 
 // }
 
-// static ssize_t buscar(const char* clave, char* claves[], size_t largo)
-// {
-//     for (size_t i = 0; i < largo; i++) {
-//         if (strcmp(clave, claves[i]) == 0) return (ssize_t) i;
-//     }
-//     return -1;
-// }
+ static ssize_t buscar(const char* clave, char* claves[], size_t largo)
+ {
+     for (size_t i = 0; i < largo; i++) {
+         if (strcmp(clave, claves[i]) == 0) return (ssize_t) i;
+     }
+     return -1;
+ }
 
-// static void prueba_hash_iterar()
-// {
-//     hash_t* hash = hash_crear(NULL);
+ static void prueba_hash_iterar()
+ {
+     hash_t* hash = hash_crear(NULL);
 
-//     char *claves[] = {"perro", "gato", "vaca"};
-//     char *valores[] = {"guau", "miau", "mu"};
+     char *claves[] = {"perro", "gato", "vaca"};
+     char *valores[] = {"guau", "miau", "mu"};
 
-//     /* Inserta 3 valores */
-//     print_test("Prueba hash insertar clave1", hash_guardar(hash, claves[0], valores[0]));
-//     print_test("Prueba hash insertar clave2", hash_guardar(hash, claves[1], valores[1]));
-//     print_test("Prueba hash insertar clave3", hash_guardar(hash, claves[2], valores[2]));
+     /* Inserta 3 valores */
+     print_test("Prueba hash insertar clave1", hash_guardar(hash, claves[0], valores[0]));
+     print_test("Prueba hash insertar clave2", hash_guardar(hash, claves[1], valores[1]));
+     print_test("Prueba hash insertar clave3", hash_guardar(hash, claves[2], valores[2]));
 
-//     // Prueba de iteración sobre las claves almacenadas.
-//     hash_iter_t* iter = hash_iter_crear(hash);
-//     const char *clave;
-//     ssize_t indice;
+     // Prueba de iteración sobre las claves almacenadas.
+     hash_iter_t* iter = hash_iter_crear(hash);
+     const char *clave;
+     ssize_t indice;
 
-//     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-//     /* Primer valor */
-//     clave = hash_iter_ver_actual(iter);
-//     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-//     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-//     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-//     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
-//     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+     /* Primer valor */
+     clave = hash_iter_ver_actual(iter);
+     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
+     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-//     /* Segundo valor */
-//     clave = hash_iter_ver_actual(iter);
-//     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-//     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-//     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-//     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
-//     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+     /* Segundo valor */
+     clave = hash_iter_ver_actual(iter);
+     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
+     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-//     /* Tercer valor */
-//     clave = hash_iter_ver_actual(iter);
-//     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-//     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-//     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-//     /* Se anula esta prueba por diferencias de criterios */
-//     hash_iter_avanzar(iter);
-//     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
+     /* Tercer valor */
+     clave = hash_iter_ver_actual(iter);
+     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+     /* Se anula esta prueba por diferencias de criterios */
+     hash_iter_avanzar(iter);
+     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
 
-//     /* Vuelve a tratar de avanzar, por las dudas */
-//     print_test("Prueba hash iterador ver actual, es NULL", !hash_iter_ver_actual(iter));
-//     print_test("Prueba hash iterador avanzar es false", !hash_iter_avanzar(iter));
-//     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
+     /* Vuelve a tratar de avanzar, por las dudas */
+     print_test("Prueba hash iterador ver actual, es NULL", !hash_iter_ver_actual(iter));
+     print_test("Prueba hash iterador avanzar es false", !hash_iter_avanzar(iter));
+     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
 
-//     hash_iter_destruir(iter);
-//     hash_destruir(hash);
-// }
+     hash_iter_destruir(iter);
+     hash_destruir(hash);
+ }
 
 // static void prueba_hash_iterar_volumen(size_t largo)
 // {
@@ -405,7 +405,7 @@ void pruebas_hash_catedra()
 {
     /* Ejecuta todas las pruebas unitarias. */
     prueba_crear_hash_vacio();
-    // prueba_iterar_hash_vacio();
+    prueba_iterar_hash_vacio();
     prueba_hash_insertar();
     prueba_hash_reemplazar();
     prueba_hash_reemplazar_con_destruir();
@@ -413,7 +413,7 @@ void pruebas_hash_catedra()
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
     // prueba_hash_volumen(5000, true);
-    //prueba_hash_iterar();
+    prueba_hash_iterar();
     //prueba_hash_iterar_volumen(5000);
 }
 
