@@ -117,8 +117,16 @@ void *hash_borrar(hash_t *hash, const char *clave){
 	return NULL;
 
 }
-void *hash_obtener(const hash_t *hash, const char *clave){}
-bool hash_pertenece(const hash_t *hash, const char *clave){}
+void *hash_obtener(const hash_t *hash, const char *clave){
+	//TODO crear alguna forma de obtener la posicion.
+	if (hash->tabla[posicion]->estado == OCUPADO) return hash->tabla[posicion]->dato;
+	return NULL;
+
+}
+
+bool hash_pertenece(const hash_t *hash, const char *clave){
+	return hash_obtener(hash,clave);
+}
 
 size_t hash_cantidad(const hash_t *hash){
 	return hash->cantidad;
