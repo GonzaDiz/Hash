@@ -7,6 +7,7 @@
 
 #include "hash.h"
 #include "testing.h"
+
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
@@ -84,7 +85,6 @@ static void prueba_hash_reemplazar()
     char *clave2 = "gato", *valor2a = "miau", *valor2b = "meaow";
 
     /* Inserta 2 valores y luego los reemplaza */
-    printf("\nINSERTA 2 VALORES Y LUEGO LOS REEMPLAZA\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1a));
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
@@ -118,7 +118,6 @@ static void prueba_hash_reemplazar_con_destruir()
     valor2b = malloc(10 * sizeof(char));
 
     /* Inserta 2 valores y luego los reemplaza (debe liberar lo que reemplaza) */
-    printf("INSERTA 2 VALORES Y LUEGO LOS REEMPLAZA (DEBE LIBERAR LO QUE REEMPLAZA)\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1a));
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
     print_test("Prueba hash obtener clave1 es valor1a", hash_obtener(hash, clave1) == valor1a);
@@ -148,7 +147,6 @@ static void prueba_hash_borrar()
     char *clave3 = "vaca", *valor3 = "mu";
 
     /* Inserta 3 valores y luego los borra */
-    printf("INSERTA 3 VALORES Y LUEGO LOS BORRA\n");
     print_test("Prueba hash insertar clave1", hash_guardar(hash, clave1, valor1));
     print_test("Prueba hash insertar clave2", hash_guardar(hash, clave2, valor2));
     print_test("Prueba hash insertar clave3", hash_guardar(hash, clave3, valor3));
@@ -183,7 +181,7 @@ static void prueba_hash_clave_vacia()
     hash_t* hash = hash_crear(NULL);
 
     char *clave = "", *valor = "";
-    printf("PRUEBA HASH CLAVE VACIA\n");
+
     print_test("Prueba hash insertar clave vacia", hash_guardar(hash, clave, valor));
     print_test("Prueba hash la cantidad de elementos es 1", hash_cantidad(hash) == 1);
     print_test("Prueba hash obtener clave vacia es valor", hash_obtener(hash, clave) == valor);
@@ -201,7 +199,6 @@ static void prueba_hash_valor_null()
     char *clave = "", *valor = NULL;
 
     /* Inserta 1 valor y luego lo borra */
-    printf("PRUEBA HASH VALOR NULL\n");
     print_test("Prueba hash insertar clave vacia valor NULL", hash_guardar(hash, clave, valor));
     print_test("Prueba hash la cantidad de elementos es 1", hash_cantidad(hash) == 1);
     print_test("Prueba hash obtener clave vacia es valor NULL", hash_obtener(hash, clave) == valor);
@@ -212,65 +209,65 @@ static void prueba_hash_valor_null()
     hash_destruir(hash);
 }
 
-// static void prueba_hash_volumen(size_t largo, bool debug)
-// {
-//     hash_t* hash = hash_crear(NULL);
+static void prueba_hash_volumen(size_t largo, bool debug)
+{
+    hash_t* hash = hash_crear(NULL);
 
-//     const size_t largo_clave = 10;
-//     char (*claves)[largo_clave] = malloc(largo * largo_clave);
+    const size_t largo_clave = 10;
+    char (*claves)[largo_clave] = malloc(largo * largo_clave);
 
-//     unsigned* valores[largo];
+    unsigned* valores[largo];
 
-//     /* Inserta 'largo' parejas en el hash */
-//     bool ok = true;
-//     for (unsigned i = 0; i < largo; i++) {
-//         valores[i] = malloc(sizeof(int));
-//         sprintf(claves[i], "%08d", i);
-//         *valores[i] = i;
-//         ok = hash_guardar(hash, claves[i], valores[i]);
-//         if (!ok) break;
-//     }
+    /* Inserta 'largo' parejas en el hash */
+    bool ok = true;
+    for (unsigned i = 0; i < largo; i++) {
+        valores[i] = malloc(sizeof(int));
+        sprintf(claves[i], "%08d", i);
+        *valores[i] = i;
+        ok = hash_guardar(hash, claves[i], valores[i]);
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash almacenar muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
+    if (debug) print_test("Prueba hash almacenar muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
 
-//     /* Verifica que devuelva los valores correctos */
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_pertenece(hash, claves[i]);
-//         if (!ok) break;
-//         ok = hash_obtener(hash, claves[i]) == valores[i];
-//         if (!ok) break;
-//     }
+    /* Verifica que devuelva los valores correctos */
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_pertenece(hash, claves[i]);
+        if (!ok) break;
+        ok = hash_obtener(hash, claves[i]) == valores[i];
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash pertenece y obtener muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
+    if (debug) print_test("Prueba hash pertenece y obtener muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
 
-//     /* Verifica que borre y devuelva los valores correctos */
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_borrar(hash, claves[i]) == valores[i];
-//         if (!ok) break;
-//     }
+    /* Verifica que borre y devuelva los valores correctos */
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_borrar(hash, claves[i]) == valores[i];
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash borrar muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
+    if (debug) print_test("Prueba hash borrar muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
 
-//     /* Destruye el hash y crea uno nuevo que sí libera */
-//     hash_destruir(hash);
-//     hash = hash_crear(free);
+    /* Destruye el hash y crea uno nuevo que sí libera */
+    hash_destruir(hash);
+    hash = hash_crear(free);
 
-//     /* Inserta 'largo' parejas en el hash */
-//     ok = true;
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_guardar(hash, claves[i], valores[i]);
-//         if (!ok) break;
-//     }
+    /* Inserta 'largo' parejas en el hash */
+    ok = true;
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_guardar(hash, claves[i], valores[i]);
+        if (!ok) break;
+    }
 
-//     free(claves);
+    free(claves);
 
-//     /* Destruye el hash - debería liberar los enteros */
-//     hash_destruir(hash);
+    /* Destruye el hash - debería liberar los enteros */
+    hash_destruir(hash);
 
-// }
+}
 
 // static ssize_t buscar(const char* clave, char* claves[], size_t largo)
 // {
@@ -412,12 +409,12 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    // prueba_hash_volumen(5000, true);
+    prueba_hash_volumen(5000, true);
     //prueba_hash_iterar();
     //prueba_hash_iterar_volumen(5000);
 }
 
-// void pruebas_volumen_catedra(size_t largo)
-// {
-//     prueba_hash_volumen(largo, false);
-// }
+void pruebas_volumen_catedra(size_t largo)
+{
+    prueba_hash_volumen(largo, false);
+}
