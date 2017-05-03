@@ -153,7 +153,10 @@ void *hash_obtener(const hash_t *hash, const char *clave){
 }
 
 bool hash_pertenece(const hash_t *hash, const char *clave){
-	return hash_obtener(hash,clave);
+	//return hash_obtener(hash,clave);
+	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	if (hash->tabla[posicion].estado != OCUPADO) return false;
+	return true;
 }
 
 size_t hash_cantidad(const hash_t *hash){
