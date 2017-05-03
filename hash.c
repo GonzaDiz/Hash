@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 133
+#define TAMANIO_INICIAL 10000
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -44,7 +44,7 @@ campo_hash_t* crear_tabla (size_t tam){
 	for (size_t i=0;i<tam;i++){
 		//campo_hash_t campo = malloc (sizeof(campo_hash_t));
 		//if (campo == NULL) return NULL;
-		campo.clave = NULL;
+		campo.clave = " ";
 		campo.dato = NULL;
 		campo.estado = VACIO;
 		tabla[i] = campo;
@@ -74,7 +74,7 @@ size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave)
   *****************************************************/
 
 hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
-	hash_t* hash = malloc (sizeof(hash_t));
+	hash_t* hash = malloc(sizeof(hash_t));
 	if (hash == NULL) return NULL;
 
 	hash->cantidad = 0;
@@ -97,6 +97,8 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 	//Obtengo posicion
 	//size_t posInicial = hash(clave,hash->tam);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	// printf("$$$$$$$$$$$$$$$$%zu$$$$$$$$$$$$$$$$$$$",posicion);
+	// printf("$$$$$$$$$$$$$$$$%u$$$$$$$$$$$$$$$$$$$",hash->tabla[posicion].estado);
 
 	//if (hash->tabla[posicion] == NULL) return false;
 
@@ -108,7 +110,8 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 	}
 	//Si la clave no existia en la tabla, la guardo en la posicion vacia que tenia.
 	if (hash->tabla[posicion].estado == VACIO){
-		strcpy(hash->tabla[posicion].clave,clave);
+		char* nstr = strdup(clave);
+		hash->tabla[posicion].clave = nstr; 
 		hash->tabla[posicion].dato = dato;
 		hash->tabla[posicion].estado = OCUPADO;
 		hash->cantidad++;
