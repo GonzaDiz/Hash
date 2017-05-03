@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 10000
+#define TAMANIO_INICIAL 133
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -44,7 +44,7 @@ campo_hash_t* crear_tabla (size_t tam){
 	for (size_t i=0;i<tam;i++){
 		//campo_hash_t campo = malloc (sizeof(campo_hash_t));
 		//if (campo == NULL) return NULL;
-		campo.clave = " ";
+		campo.clave = NULL;
 		campo.dato = NULL;
 		campo.estado = VACIO;
 		tabla[i] = campo;
@@ -104,14 +104,17 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	//Si la clave ya existia en la tabla, destruyo el dato y clo cambio por el nuevo dato
 	if (hash->tabla[posicion].estado == OCUPADO){
-		hash->destructor(hash->tabla[posicion].dato);
+		if(hash->destructor) hash->destructor(hash->tabla[posicion].dato);
 		hash->tabla[posicion].dato = dato;
 		return true;
 	}
 	//Si la clave no existia en la tabla, la guardo en la posicion vacia que tenia.
 	if (hash->tabla[posicion].estado == VACIO){
-		char* nstr = strdup(clave);
-		hash->tabla[posicion].clave = nstr; 
+		size_t len = strlen(clave);
+		hash->tabla[posicion].clave = malloc(1+len);
+		memcpy(hash->tabla[posicion].clave,clave,len);
+		hash->tabla[posicion].clave[len] = '\0';
+		//hash->tabla[posicion].clave = strdup(clave); 
 		hash->tabla[posicion].dato = dato;
 		hash->tabla[posicion].estado = OCUPADO;
 		hash->cantidad++;
