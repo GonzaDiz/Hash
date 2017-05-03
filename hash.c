@@ -1,6 +1,7 @@
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
+#include <string.h>
 #include "hash.h"
 
 #define TAMANIO_INICIAL 133
@@ -26,8 +27,8 @@ struct hash{
  /******************************************************
    *                  HASHING			 	    	   *
   *****************************************************/
-unsigned long hash(unsigned char *str, size_t tam) {
-        unsigned long hash = 5381;
+size_t hash(const char *str, size_t tam) {
+        size_t hash = 5381;
         int c;
         while (c = *str++)
             hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
@@ -56,6 +57,22 @@ campo_hash_t* crear_tabla (size_t tam){
 	return tabla;
 }
 
+
+//Pre: el hash fue creado.
+//Post: si la clave ya existia en la tabla devuelve la posicion en la que estaba, si la clave no existia devuelve
+//una posicion vacia.
+size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave){
+	while (tabla[posicion]->estado != VACIO){
+		if (tabla[posicion]->estado == OCUPADO){
+			if (strcmp(tabla[posicion]->clave,clave) == 0){
+			return posicion;
+			}
+		}
+		posicion++;
+	}
+	return posicion;
+}
+
  /******************************************************
    *             PRIMITIVAS DEL HASH 	    		   *
   *****************************************************/
@@ -80,16 +97,19 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	// TODO redimensionar en caso de ser necesario.
-	// TODO crear alguna forma de obtener la posicion.
 
+	//Obtengo posicion
+	size_t posicion = obtener_posicion(hash->tabla,hash(clave,hash->tam),clave);
 
-	if (hash->tabla[posicion] == NULL) return false;
+	//if (hash->tabla[posicion] == NULL) return false;
 
+	//Si la clave ya existia en la tabla, destruyo el dato y clo cambio por el nuevo dato
 	if (hash->tabla[posicion]->estado == OCUPADO){
 		hash->destruir_dato(hash->tabla[posicion]->dato);
 		hash->tabla[posicion]->dato = dato;
 		return true;
 	}
+	//Si la clave no existia en la tabla, la guardo en la posicion vacia que tenia.
 	if (hash->tabla[posicion]->estado == VACIO){
 		hash->tabla[posicion]->clave = clave;
 		hash->tabla[posicion]->dato = dato;
@@ -103,11 +123,13 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 void *hash_borrar(hash_t *hash, const char *clave){
 
 	//TODO redimensionar en caso de ser necesario.
-	//TODO crear alguna forma de obtener la posicion.
+	
+	//Obtengo posicion
+	size_t posicion = obtener_posicion(hash->tabla,hash(clave,hash->tam),clave);
 
+	//Si la posicion estaba ocupada, guardo el dato, cambio el estado a BORRADO y borro la clave y el dato.
 	if (hash->tabla[posicion]->estado == OCUPADO){
 		void* dato = hash->tabla[posicion]->dato;
-
 		hash->tabla[posicion]->clave = NULL;
 		hash->tabla[posicion]->dato = NULL;
 		hash->tabla[posicion]->estado = BORRADO;
@@ -119,6 +141,9 @@ void *hash_borrar(hash_t *hash, const char *clave){
 }
 void *hash_obtener(const hash_t *hash, const char *clave){
 	//TODO crear alguna forma de obtener la posicion.
+	//Obtengo posicion.
+	size_t posicion = obtener_posicion(hash->tabla,hash(clave,hash->tam),clave);
+	//En caso de que la posicion este ocupada devuelvo el dato de esa posicion.
 	if (hash->tabla[posicion]->estado == OCUPADO) return hash->tabla[posicion]->dato;
 	return NULL;
 
