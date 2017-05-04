@@ -213,8 +213,9 @@ static void prueba_hash_valor_null()
     hash_destruir(hash);
 }
 
-/*static void prueba_hash_volumen(size_t largo, bool debug)
+static void prueba_hash_volumen(size_t largo, bool debug)
 {
+    printf("COMENZANDO PRUEBAS VOLUMEN\n");
     hash_t* hash = hash_crear(NULL);
 
     const size_t largo_clave = 10;
@@ -271,7 +272,7 @@ static void prueba_hash_valor_null()
     // Destruye el hash - debería liberar los enteros 
     hash_destruir(hash);
 
-}*/
+}
 
   static ssize_t buscar(const char* clave, char* claves[], size_t largo)
   {
@@ -414,8 +415,7 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    
-    //prueba_hash_volumen(5000, true);
+    prueba_hash_volumen(5000, true);
     prueba_hash_iterar();
     //prueba_hash_iterar_volumen(5000);
 }

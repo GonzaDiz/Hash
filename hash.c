@@ -48,8 +48,6 @@ campo_hash_t* crear_tabla (size_t tam){
 	if (tabla == NULL) return NULL;
 	campo_hash_t campo;
 	for (size_t i=0;i<tam;i++){
-		//campo_hash_t campo = malloc (sizeof(campo_hash_t));
-		//if (campo == NULL) return NULL;
 		campo.clave = NULL;
 		campo.dato = NULL;
 		campo.estado = VACIO;
@@ -57,6 +55,25 @@ campo_hash_t* crear_tabla (size_t tam){
 	}
 
 	return tabla;
+}
+
+hash_t* redim_hash(hash_t* hash){
+
+	size_t tinicial = hash->tam;
+	printf("tamanio inicial de tam: %zu\n",hash->tam);
+	hash->tam += (hash->tam * 33 / 100);
+	printf("tamanio final de tam: %zu\n",hash->tam);
+	campo_hash_t* tabla_nueva = realloc(hash->tabla, hash->tam * sizeof(campo_hash_t));
+	if (!tabla_nueva) return NULL;
+	hash->tabla = tabla_nueva;
+	campo_hash_t campo;
+	for (size_t i = tinicial;i < hash->tam;i++){
+		campo.clave = NULL;
+		campo.dato = NULL;
+		campo.estado = VACIO;
+		hash->tabla[i] = campo;
+	}
+	return hash;
 }
 
 
@@ -115,7 +132,7 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	// TODO redimensionar en caso de ser necesario.
-
+	if(hash->tam <= hash->cantidad) redim_hash(hash);
 	//Obtengo posicion
 	//size_t posInicial = hash(clave,hash->tam);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
