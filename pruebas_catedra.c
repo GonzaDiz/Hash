@@ -335,8 +335,10 @@ static void prueba_hash_volumen(size_t largo, bool debug)
       hash_destruir(hash);
   }
 
- /*static void prueba_hash_iterar_volumen(size_t largo)
+ static void prueba_hash_iterar_volumen(size_t largo)
  {
+
+ 	printf("PRUEBA HASH ITERAR VOLUMEN\n");
      hash_t* hash = hash_crear(NULL);
 
      const size_t largo_clave = 10;
@@ -396,7 +398,7 @@ static void prueba_hash_volumen(size_t largo, bool debug)
      free(claves);
      hash_iter_destruir(iter);
      hash_destruir(hash);
- }*/
+ }
 
 /* ******************************************************************
  *                        FUNCIÓN PRINCIPAL
@@ -417,7 +419,7 @@ void pruebas_hash_catedra()
     prueba_hash_valor_null();
     prueba_hash_volumen(5000, true);
     prueba_hash_iterar();
-    //prueba_hash_iterar_volumen(5000);
+    prueba_hash_iterar_volumen(5000);
 }
 
 // void pruebas_volumen_catedra(size_t largo)

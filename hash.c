@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 133
+#define TAMANIO_INICIAL 139
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -57,26 +57,6 @@ campo_hash_t* crear_tabla (size_t tam){
 	return tabla;
 }
 
-hash_t* redim_hash(hash_t* hash){
-
-	size_t tinicial = hash->tam;
-	printf("tamanio inicial de tam: %zu\n",hash->tam);
-	hash->tam += (hash->tam * 33 / 100);
-	printf("tamanio final de tam: %zu\n",hash->tam);
-	campo_hash_t* tabla_nueva = realloc(hash->tabla, hash->tam * sizeof(campo_hash_t));
-	if (!tabla_nueva) return NULL;
-	hash->tabla = tabla_nueva;
-	campo_hash_t campo;
-	for (size_t i = tinicial;i < hash->tam;i++){
-		campo.clave = NULL;
-		campo.dato = NULL;
-		campo.estado = VACIO;
-		hash->tabla[i] = campo;
-	}
-	return hash;
-}
-
-
 //Pre: el hash fue creado.
 //Post: si la clave ya existia en la tabla devuelve la posicion en la que estaba, si la clave no existia devuelve
 //una posicion vacia.
@@ -92,21 +72,62 @@ size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave)
 	return posicion;
 }
 
+void destruir_tabla(hash_t* hash){
+	for(size_t i=0;i < hash->tam;i++){
+		if(hash->tabla[i].estado == OCUPADO){ 
+			free(hash->tabla[i].clave);
+			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+		}
+	}
+	free(hash->tabla);
+}
+
+hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
+
+	/*size_t tinicial = hash->tam;
+	printf("tamanio inicial de tam: %zu\n",hash->tam);
+	hash->tam += (hash->tam * 33 / 100);
+	printf("tamanio final de tam: %zu\n",hash->tam);
+	campo_hash_t* tabla_nueva = realloc(hash->tabla, hash->tam * sizeof(campo_hash_t));
+	if (!tabla_nueva) return NULL;
+	hash->tabla = tabla_nueva;
+	campo_hash_t campo;
+	for (size_t i = tinicial;i < hash->tam;i++){
+		campo.clave = NULL;
+		campo.dato = NULL;
+		campo.estado = VACIO;
+	hash->tabla[i] = campo;
+	}*/
+
+	hash_iter_t* iter = hash_iter_crear(hash);
+	if (iter == NULL) return NULL;
+	campo_hash_t* tabla = crear_tabla(tamanioNuevo); // Tengo una nueva tabla mas grande ahora debo pasar lo de la tabla anterior a esta
+	if (tabla == NULL) return NULL;
+
+	while (hash_iter_al_final(iter)){
+		size_t posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
+		tabla[posicion].estado=OCUPADO;
+		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
+		size_t len = strlen(hash_iter_ver_actual(iter));
+		tabla[posicion].clave = malloc(1+len);
+		memcpy(tabla[posicion].clave,hash_iter_ver_actual,len);
+		tabla[posicion].clave[len] = '\0';
+		hash_iter_avanzar(iter);
+	}
+
+	destruir_tabla(hash);
+	hash->tam = tamanioNuevo;
+	hash->tabla = tabla;
+	hash_iter_destruir(iter);
+	return hash;
+}
+
 size_t obtener_posicion_ocupada(const hash_t* hash, size_t posicion){
 	while (hash->tabla[posicion].estado !=OCUPADO && (posicion < (hash->tam-1))){
 		posicion++;
 	}
 	return posicion;
 }
-
-/*hash_t *hash_redimensionar(hash_t *hash,size_t tam_nuevo){
-	campo_hash_t* tabla = crear_tabla(tam_nuevo);
-}*/
-
- /******************************************************
-   *             PRIMITIVAS DEL HASH 	    		   *
-  *****************************************************/
-
 
  /******************************************************
    *             PRIMITIVAS HASH   		    		   *
@@ -132,7 +153,7 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	// TODO redimensionar en caso de ser necesario.
-	if(hash->tam <= hash->cantidad) redim_hash(hash);
+	if(hash->cantidad > (hash->tam * 0.7)) redim_hash(hash,hash->tam * 2);
 	//Obtengo posicion
 	//size_t posInicial = hash(clave,hash->tam);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
@@ -159,13 +180,7 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 }
 void hash_destruir(hash_t *hash){
-	for(size_t i=0;i < hash->tam;i++){
-		if(hash->tabla[i].estado == OCUPADO){ 
-			free(hash->tabla[i].clave);
-			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
-		}
-	}
-	free(hash->tabla);
+	destruir_tabla(hash);
 	free(hash);
 }
 void *hash_borrar(hash_t *hash, const char *clave){
@@ -195,7 +210,6 @@ void *hash_obtener(const hash_t *hash, const char *clave){
 	//En caso de que la posicion este ocupada devuelvo el dato de esa posicion.
 	if (hash->tabla[posicion].estado == OCUPADO) return hash->tabla[posicion].dato;
 	return NULL;
-
 }
 
 bool hash_pertenece(const hash_t *hash, const char *clave){
@@ -207,7 +221,6 @@ bool hash_pertenece(const hash_t *hash, const char *clave){
 size_t hash_cantidad(const hash_t *hash){
 	return hash->cantidad;
 }
-
 
  /******************************************************
    *             PRIMITIVAS ITERADOR 	    		   *
