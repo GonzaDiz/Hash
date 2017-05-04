@@ -119,9 +119,6 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 	//Obtengo posicion
 	//size_t posInicial = hash(clave,hash->tam);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
-	// printf("$$$$$$$$$$$$$$$$%zu$$$$$$$$$$$$$$$$$$$",posicion);
-	// printf("$$$$$$$$$$$$$$$$%u$$$$$$$$$$$$$$$$$$$",hash->tabla[posicion].estado);
-
 	//if (hash->tabla[posicion] == NULL) return false;
 
 	//Si la clave ya existia en la tabla, destruyo el dato y clo cambio por el nuevo dato
@@ -136,7 +133,6 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 		hash->tabla[posicion].clave = malloc(1+len);
 		memcpy(hash->tabla[posicion].clave,clave,len);
 		hash->tabla[posicion].clave[len] = '\0';
-		//hash->tabla[posicion].clave = strdup(clave); 
 		hash->tabla[posicion].dato = dato;
 		hash->tabla[posicion].estado = OCUPADO;
 		hash->cantidad++;
@@ -144,6 +140,16 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 	}
 	return false;
 
+}
+void hash_destruir(hash_t *hash){
+	for(size_t i=0;i < hash->tam;i++){
+		if(hash->tabla[i].estado == OCUPADO){ 
+			free(hash->tabla[i].clave);
+			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+		}
+	}
+	free(hash->tabla);
+	free(hash);
 }
 void *hash_borrar(hash_t *hash, const char *clave){
 
@@ -155,6 +161,7 @@ void *hash_borrar(hash_t *hash, const char *clave){
 	//Si la posicion estaba ocupada, guardo el dato, cambio el estado a BORRADO y borro la clave y el dato.
 	if (hash->tabla[posicion].estado == OCUPADO){
 		void* dato = hash->tabla[posicion].dato;
+		free(hash->tabla[posicion].clave);
 		hash->tabla[posicion].clave = NULL;
 		hash->tabla[posicion].dato = NULL;
 		hash->tabla[posicion].estado = BORRADO;
@@ -184,11 +191,6 @@ size_t hash_cantidad(const hash_t *hash){
 	return hash->cantidad;
 }
 
-void hash_destruir(hash_t *hash){
-	//destuir_dato(hash->)
-	free(hash->tabla);
-	free(hash);
-}
 
  /******************************************************
    *             PRIMITIVAS ITERADOR 	    		   *
@@ -197,7 +199,7 @@ void hash_destruir(hash_t *hash){
 hash_iter_t *hash_iter_crear(const hash_t *hash){
 	hash_iter_t* iter = malloc(sizeof(hash_iter_t));
 	if (iter == NULL) return NULL;
-	iter->posicionActual = obtener_posicion_ocupada(hash,0);
+	iter->posicionActual = 0;
 	iter->recorridos = 0;
 	iter->hash = hash;
 	return iter;

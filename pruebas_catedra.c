@@ -21,6 +21,7 @@ static void prueba_crear_hash_vacio()
 {
     hash_t* hash = hash_crear(NULL);
 
+    printf("PRUEBAS HASH VACIO\n");
     print_test("Prueba hash crear hash vacio", hash);
     print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
     print_test("Prueba hash obtener clave A, es NULL, no existe", !hash_obtener(hash, "A"));
@@ -32,13 +33,13 @@ static void prueba_crear_hash_vacio()
 
  static void prueba_iterar_hash_vacio()
  {
-     hash_t* hash = hash_crear(NULL);
-     hash_iter_t* iter = hash_iter_crear(hash);
-     print_test("Prueba hash iter crear iterador hash vacio", iter);
-     print_test("Prueba hash iter esta al final", hash_iter_al_final(iter));
-     print_test("Prueba hash iter avanzar es false", !hash_iter_avanzar(iter));
-     print_test("Prueba hash iter ver actual es NULL", !hash_iter_ver_actual(iter));
-
+    hash_t* hash = hash_crear(NULL);
+    hash_iter_t* iter = hash_iter_crear(hash);
+    printf("PRUEBAS ITERADOR HASH VACIO\n");
+    print_test("Prueba hash iter crear iterador hash vacio", iter);
+    print_test("Prueba hash iter esta al final", hash_iter_al_final(iter));
+    print_test("Prueba hash iter avanzar es false", !hash_iter_avanzar(iter));
+    print_test("Prueba hash iter ver actual es NULL", !hash_iter_ver_actual(iter));
     hash_iter_destruir(iter);
     hash_destruir(hash);
 }
@@ -212,126 +213,126 @@ static void prueba_hash_valor_null()
     hash_destruir(hash);
 }
 
-// static void prueba_hash_volumen(size_t largo, bool debug)
-// {
-//     hash_t* hash = hash_crear(NULL);
+static void prueba_hash_volumen(size_t largo, bool debug)
+{
+    hash_t* hash = hash_crear(NULL);
 
-//     const size_t largo_clave = 10;
-//     char (*claves)[largo_clave] = malloc(largo * largo_clave);
+    const size_t largo_clave = 10;
+    char (*claves)[largo_clave] = malloc(largo * largo_clave);
 
-//     unsigned* valores[largo];
+    unsigned* valores[largo];
 
-//     /* Inserta 'largo' parejas en el hash */
-//     bool ok = true;
-//     for (unsigned i = 0; i < largo; i++) {
-//         valores[i] = malloc(sizeof(int));
-//         sprintf(claves[i], "%08d", i);
-//         *valores[i] = i;
-//         ok = hash_guardar(hash, claves[i], valores[i]);
-//         if (!ok) break;
-//     }
+    /* Inserta 'largo' parejas en el hash */
+    bool ok = true;
+    for (unsigned i = 0; i < largo; i++) {
+        valores[i] = malloc(sizeof(int));
+        sprintf(claves[i], "%08d", i);
+        *valores[i] = i;
+        ok = hash_guardar(hash, claves[i], valores[i]);
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash almacenar muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
+    if (debug) print_test("Prueba hash almacenar muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
 
-//     /* Verifica que devuelva los valores correctos */
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_pertenece(hash, claves[i]);
-//         if (!ok) break;
-//         ok = hash_obtener(hash, claves[i]) == valores[i];
-//         if (!ok) break;
-//     }
+    /* Verifica que devuelva los valores correctos */
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_pertenece(hash, claves[i]);
+        if (!ok) break;
+        ok = hash_obtener(hash, claves[i]) == valores[i];
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash pertenece y obtener muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
+    if (debug) print_test("Prueba hash pertenece y obtener muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
 
-//     /* Verifica que borre y devuelva los valores correctos */
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_borrar(hash, claves[i]) == valores[i];
-//         if (!ok) break;
-//     }
+    /* Verifica que borre y devuelva los valores correctos */
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_borrar(hash, claves[i]) == valores[i];
+        if (!ok) break;
+    }
 
-//     if (debug) print_test("Prueba hash borrar muchos elementos", ok);
-//     if (debug) print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
+    if (debug) print_test("Prueba hash borrar muchos elementos", ok);
+    if (debug) print_test("Prueba hash la cantidad de elementos es 0", hash_cantidad(hash) == 0);
 
-//     /* Destruye el hash y crea uno nuevo que sí libera */
-//     hash_destruir(hash);
-//     hash = hash_crear(free);
+    /* Destruye el hash y crea uno nuevo que sí libera */
+    hash_destruir(hash);
+    hash = hash_crear(free);
 
-//     /* Inserta 'largo' parejas en el hash */
-//     ok = true;
-//     for (size_t i = 0; i < largo; i++) {
-//         ok = hash_guardar(hash, claves[i], valores[i]);
-//         if (!ok) break;
-//     }
+    /* Inserta 'largo' parejas en el hash */
+    ok = true;
+    for (size_t i = 0; i < largo; i++) {
+        ok = hash_guardar(hash, claves[i], valores[i]);
+        if (!ok) break;
+    }
 
-//     free(claves);
+    free(claves);
 
-//     /* Destruye el hash - debería liberar los enteros */
-//     hash_destruir(hash);
+    /* Destruye el hash - debería liberar los enteros */
+    hash_destruir(hash);
 
-// }
+}
 
- static ssize_t buscar(const char* clave, char* claves[], size_t largo)
- {
-     for (size_t i = 0; i < largo; i++) {
-         if (strcmp(clave, claves[i]) == 0) return (ssize_t) i;
-     }
-     return -1;
- }
+ // static ssize_t buscar(const char* clave, char* claves[], size_t largo)
+ // {
+ //     for (size_t i = 0; i < largo; i++) {
+ //         if (strcmp(clave, claves[i]) == 0) return (ssize_t) i;
+ //     }
+ //     return -1;
+ // }
 
- static void prueba_hash_iterar()
- {
-     hash_t* hash = hash_crear(NULL);
+ // static void prueba_hash_iterar()
+ // {
+ //     hash_t* hash = hash_crear(NULL);
 
-     char *claves[] = {"perro", "gato", "vaca"};
-     char *valores[] = {"guau", "miau", "mu"};
+ //     char *claves[] = {"perro", "gato", "vaca"};
+ //     char *valores[] = {"guau", "miau", "mu"};
 
-     /* Inserta 3 valores */
-     print_test("Prueba hash insertar clave1", hash_guardar(hash, claves[0], valores[0]));
-     print_test("Prueba hash insertar clave2", hash_guardar(hash, claves[1], valores[1]));
-     print_test("Prueba hash insertar clave3", hash_guardar(hash, claves[2], valores[2]));
+ //     /* Inserta 3 valores */
+ //     print_test("Prueba hash insertar clave1", hash_guardar(hash, claves[0], valores[0]));
+ //     print_test("Prueba hash insertar clave2", hash_guardar(hash, claves[1], valores[1]));
+ //     print_test("Prueba hash insertar clave3", hash_guardar(hash, claves[2], valores[2]));
 
-     // Prueba de iteración sobre las claves almacenadas.
-     hash_iter_t* iter = hash_iter_crear(hash);
-     const char *clave;
-     ssize_t indice;
+ //     // Prueba de iteración sobre las claves almacenadas.
+ //     hash_iter_t* iter = hash_iter_crear(hash);
+ //     const char *clave;
+ //     ssize_t indice;
 
-     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+ //     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-     /* Primer valor */
-     clave = hash_iter_ver_actual(iter);
-     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
-     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+ //     /* Primer valor */
+ //     clave = hash_iter_ver_actual(iter);
+ //     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+ //     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+ //     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+ //     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
+ //     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-     /* Segundo valor */
-     clave = hash_iter_ver_actual(iter);
-     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
-     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
+ //     /* Segundo valor */
+ //     clave = hash_iter_ver_actual(iter);
+ //     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+ //     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+ //     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+ //     print_test("Prueba hash iterador avanzar es true", hash_iter_avanzar(iter));
+ //     print_test("Prueba hash iterador esta al final, es false", !hash_iter_al_final(iter));
 
-     /* Tercer valor */
-     clave = hash_iter_ver_actual(iter);
-     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
-     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
-     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
-     /* Se anula esta prueba por diferencias de criterios */
-     hash_iter_avanzar(iter);
-     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
+ //     /* Tercer valor */
+ //     clave = hash_iter_ver_actual(iter);
+ //     indice = buscar(clave, claves, sizeof(claves) / sizeof(char *));
+ //     print_test("Prueba hash iterador ver actual, es una clave valida", indice != -1);
+ //     print_test("Prueba hash iterador ver actual, no es el mismo puntero", clave != claves[indice]);
+ //     /* Se anula esta prueba por diferencias de criterios */
+ //     hash_iter_avanzar(iter);
+ //     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
 
-     /* Vuelve a tratar de avanzar, por las dudas */
-     print_test("Prueba hash iterador ver actual, es NULL", !hash_iter_ver_actual(iter));
-     print_test("Prueba hash iterador avanzar es false", !hash_iter_avanzar(iter));
-     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
+ //     /* Vuelve a tratar de avanzar, por las dudas */
+ //     print_test("Prueba hash iterador ver actual, es NULL", !hash_iter_ver_actual(iter));
+ //     print_test("Prueba hash iterador avanzar es false", !hash_iter_avanzar(iter));
+ //     print_test("Prueba hash iterador esta al final, es true", hash_iter_al_final(iter));
 
-     hash_iter_destruir(iter);
-     hash_destruir(hash);
- }
+ //     hash_iter_destruir(iter);
+ //     hash_destruir(hash);
+ // }
 
  /*static void prueba_hash_iterar_volumen(size_t largo)
  {
@@ -412,8 +413,8 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    // prueba_hash_volumen(5000, true);
-    prueba_hash_iterar();
+    prueba_hash_volumen(5000, true);
+    //prueba_hash_iterar();
     //prueba_hash_iterar_volumen(5000);
 }
 
