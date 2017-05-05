@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 139
+#define TAMANIO_INICIAL 117
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -61,6 +61,7 @@ campo_hash_t* crear_tabla (size_t tam){
 //Post: si la clave ya existia en la tabla devuelve la posicion en la que estaba, si la clave no existia devuelve
 //una posicion vacia.
 size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave){
+
 	while (tabla[posicion].estado != VACIO){
 		if (tabla[posicion].estado == OCUPADO){
 			if (strcmp(tabla[posicion].clave,clave) == 0){
@@ -76,7 +77,7 @@ void destruir_tabla(hash_t* hash){
 	for(size_t i=0;i < hash->tam;i++){
 		if(hash->tabla[i].estado == OCUPADO){ 
 			free(hash->tabla[i].clave);
-			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+			//if(hash->destructor) hash->destructor(hash->tabla[i].dato);
 		}
 	}
 	free(hash->tabla);
@@ -106,7 +107,7 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 
 	while (!hash_iter_al_final(iter)){
 		size_t posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
-		// printf("$$$posicion actual del iterador%zu\n",iter->posicionActual);
+		printf("$$$posicion actual del iterador%zu\n",iter->posicionActual);
 		// printf("$$$posicion nueva del elemento %zu\n",posicion);
 		tabla[posicion].estado=OCUPADO;
 		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
@@ -245,7 +246,7 @@ const char *hash_iter_ver_actual(const hash_iter_t *iter){
 }
 
 bool hash_iter_al_final(const hash_iter_t *iter){
-	if (iter->recorridos == iter->hash->cantidad) return true;
+	if (iter->recorridos >= iter->hash->cantidad) return true;
 	return false;
 }
 
