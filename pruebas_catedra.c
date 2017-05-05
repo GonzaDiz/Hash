@@ -422,7 +422,7 @@ void pruebas_hash_catedra()
     prueba_hash_iterar_volumen(90);
 }
 
-// void pruebas_volumen_catedra(size_t largo)
-// {
-//     prueba_hash_volumen(largo, false);
-// }
+ void pruebas_volumen_catedra(size_t largo)
+ {
+     prueba_hash_volumen(largo, false);
+ }
