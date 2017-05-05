@@ -104,13 +104,15 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 	campo_hash_t* tabla = crear_tabla(tamanioNuevo); // Tengo una nueva tabla mas grande ahora debo pasar lo de la tabla anterior a esta
 	if (tabla == NULL) return NULL;
 
-	while (hash_iter_al_final(iter)){
+	while (!hash_iter_al_final(iter)){
 		size_t posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
+		// printf("$$$posicion actual del iterador%zu\n",iter->posicionActual);
+		// printf("$$$posicion nueva del elemento %zu\n",posicion);
 		tabla[posicion].estado=OCUPADO;
 		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
 		size_t len = strlen(hash_iter_ver_actual(iter));
 		tabla[posicion].clave = malloc(1+len);
-		memcpy(tabla[posicion].clave,hash_iter_ver_actual,len);
+		memcpy(tabla[posicion].clave,hash_iter_ver_actual(iter),len);
 		tabla[posicion].clave[len] = '\0';
 		hash_iter_avanzar(iter);
 	}
@@ -153,7 +155,9 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	// TODO redimensionar en caso de ser necesario.
-	if(hash->cantidad > (hash->tam * 0.7)) redim_hash(hash,hash->tam * 2);
+	// printf("$$$hash cantidad%zu\n",hash->cantidad);
+	// printf("$$$factor de redim %zu\n",hash->tam * 60 / 100);
+	if(hash->cantidad > hash->tam * 60 / 100) redim_hash(hash,hash->tam * 2);
 	//Obtengo posicion
 	//size_t posInicial = hash(clave,hash->tam);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
