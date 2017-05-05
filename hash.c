@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 117
+#define TAMANIO_INICIAL 200
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -101,7 +101,7 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 }
 
 size_t obtener_posicion_ocupada(const hash_t* hash, size_t posicion){
-	while (hash->tabla[posicion].estado !=OCUPADO && (posicion < (hash->tam-1))){
+	while ((posicion < (hash->tam-1)) && hash->tabla[posicion].estado !=OCUPADO){
 		posicion++;
 	}
 	return posicion;
