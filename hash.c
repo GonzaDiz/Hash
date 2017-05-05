@@ -70,16 +70,6 @@ size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave)
 	return posicion;
 }
 
-void destruir_tabla(hash_t* hash){
-	for(size_t i=0;i < hash->tam;i++){
-		if(hash->tabla[i].estado == OCUPADO){ 
-			free(hash->tabla[i].clave);
-			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
-		}
-	}
-	free(hash->tabla);
-}
-
 hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 
 	hash_iter_t* iter = hash_iter_crear(hash);
@@ -163,7 +153,13 @@ bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 }
 void hash_destruir(hash_t *hash){
-	destruir_tabla(hash);
+	for(size_t i=0;i < hash->tam;i++){
+		if(hash->tabla[i].estado == OCUPADO){ 
+			free(hash->tabla[i].clave);
+			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+		}
+	}
+	free(hash->tabla);
 	free(hash);
 }
 void *hash_borrar(hash_t *hash, const char *clave){
