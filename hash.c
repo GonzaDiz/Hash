@@ -77,7 +77,7 @@ void destruir_tabla(hash_t* hash){
 	for(size_t i=0;i < hash->tam;i++){
 		if(hash->tabla[i].estado == OCUPADO){ 
 			free(hash->tabla[i].clave);
-			//if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+			if(hash->destructor) hash->destructor(hash->tabla[i].dato);
 		}
 	}
 	free(hash->tabla);
@@ -107,7 +107,7 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 
 	while (!hash_iter_al_final(iter)){
 		size_t posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
-		printf("$$$posicion actual del iterador%zu\n",iter->posicionActual);
+		//printf("$$$posicion actual del iterador%zu\n",iter->posicionActual);
 		// printf("$$$posicion nueva del elemento %zu\n",posicion);
 		tabla[posicion].estado=OCUPADO;
 		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
@@ -118,7 +118,14 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 		hash_iter_avanzar(iter);
 	}
 
-	destruir_tabla(hash);
+	//destruir_tabla(hash);
+	for(size_t i=0;i < hash->tam;i++){
+		if(hash->tabla[i].estado == OCUPADO){ 
+			free(hash->tabla[i].clave);
+			//if(hash->destructor) hash->destructor(hash->tabla[i].dato);
+		}
+	}
+	free(hash->tabla);
 	hash->tam = tamanioNuevo;
 	hash->tabla = tabla;
 	hash_iter_destruir(iter);
