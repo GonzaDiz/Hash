@@ -49,6 +49,7 @@ bool hash_pertenece(const hash_t *hash, const char *clave);
  */
 size_t hash_cantidad(const hash_t *hash);
 
+
 /* Destruye la estructura liberando la memoria pedida y llamando a la función
  * destruir para cada par (clave, dato).
  * Pre: La estructura hash fue inicializada
@@ -74,3 +75,4 @@ bool hash_iter_al_final(const hash_iter_t *iter);
 void hash_iter_destruir(hash_iter_t* iter);
 
 #endif // HASH_H
+

@@ -229,7 +229,9 @@ static void prueba_hash_volumen(size_t largo, bool debug)
         valores[i] = malloc(sizeof(int));
         sprintf(claves[i], "%08d", i);
         *valores[i] = i;
+        //printf("%i\n",i);
         ok = hash_guardar(hash, claves[i], valores[i]);
+        //printf("%i\n",hash_tam(hash));
         if (!ok) break;
     }
 
@@ -353,7 +355,9 @@ static void prueba_hash_volumen(size_t largo, bool debug)
      for (unsigned i = 0; i < largo; i++) {
          sprintf(claves[i], "%08d", i);
          valores[i] = i;
+
          ok = hash_guardar(hash, claves[i], &valores[i]);
+
          if (!ok) break;
      }
 
@@ -419,9 +423,9 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    prueba_hash_volumen(15000, true);
+    prueba_hash_volumen(400000, true);
     prueba_hash_iterar();
-    prueba_hash_iterar_volumen(15000);
+    prueba_hash_iterar_volumen(400000);
 }
 
  void pruebas_volumen_catedra(size_t largo)

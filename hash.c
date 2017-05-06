@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <stdbool.h>
 #include <stdlib.h>
@@ -45,23 +46,28 @@ campo_hash_t* crear_tabla (size_t tam){
 	campo_hash_t* tabla = malloc((tam)*sizeof(campo_hash_t));
 	if (tabla == NULL) return NULL;
 	campo_hash_t campo;
+	campo.clave = NULL;
+	campo.dato = NULL;
+	campo.estado = VACIO;
 	for (size_t i=0;i<tam;i++){
-		campo.clave = NULL;
-		campo.dato = NULL;
-		campo.estado = VACIO;
 		tabla[i] = campo;
 	}
 	return tabla;
 }
 
-size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave){
+size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave, size_t tam){
+	// Si la clave es la misma devuelvo la misma posicion.
+	if (tabla[posicion].estado == OCUPADO){
+		if (strcmp(tabla[posicion].clave,clave) == 0) return posicion;
+	}
+
+	//Si la clave no es la misma busco la proxima vacia o una ya ocupada con la misma clave.
 	while (tabla[posicion].estado != VACIO){
-		if (tabla[posicion].estado == OCUPADO){
-			if (strcmp(tabla[posicion].clave,clave) == 0){
-			return posicion;
-			}
-		}
 		posicion++;
+		posicion = posicion % tam;
+		if (tabla[posicion].estado == OCUPADO){
+			if (strcmp(tabla[posicion].clave,clave) == 0) return posicion;
+		}
 	}
 	return posicion;
 }
@@ -74,7 +80,7 @@ hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
 
 	size_t posicion=0, len=0;
 	while (!hash_iter_al_final(iter)){
-		posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
+		posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter),tamanioNuevo);
 		tabla[posicion].estado=OCUPADO;
 		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
 		len = strlen(hash_iter_ver_actual(iter));
@@ -127,7 +133,7 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
 	if(hash->cantidad > hash->tam * 70 / 100) redim_hash(hash,hash->tam * 2);
-	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave,hash->tam);
 	
 	if (hash->tabla[posicion].estado == OCUPADO){
 		if(hash->destructor) hash->destructor(hash->tabla[posicion].dato);
@@ -160,7 +166,7 @@ void hash_destruir(hash_t *hash){
 }
 void *hash_borrar(hash_t *hash, const char *clave){
 
-	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave,hash->tam);
 
 	if (hash->tabla[posicion].estado == OCUPADO){
 		void* dato = hash->tabla[posicion].dato;
@@ -175,13 +181,13 @@ void *hash_borrar(hash_t *hash, const char *clave){
 
 }
 void *hash_obtener(const hash_t *hash, const char *clave){
-	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave,hash->tam);
 	if (hash->tabla[posicion].estado == OCUPADO) return hash->tabla[posicion].dato;
 	return NULL;
 }
 
 bool hash_pertenece(const hash_t *hash, const char *clave){
-	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
+	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave,hash->tam);
 	if (hash->tabla[posicion].estado != OCUPADO) return false;
 	return true;
 }
