@@ -236,6 +236,7 @@ static void prueba_hash_volumen(size_t largo, bool debug)
     if (debug) print_test("Prueba hash almacenar muchos elementos", ok);
     if (debug) print_test("Prueba hash la cantidad de elementos es correcta", hash_cantidad(hash) == largo);
 
+    printf("$$$$$$$$$$$$$$$$$$$11111111$$$$$$$$$$$$$$$$$$\n");
     // Verifica que devuelva los valores correctos 
     for (size_t i = 0; i < largo; i++) {
         ok = hash_pertenece(hash, claves[i]);
@@ -346,6 +347,7 @@ static void prueba_hash_volumen(size_t largo, bool debug)
 
      size_t valores[largo];
 
+    
      // Inserta 'largo' parejas en el hash 
      bool ok = true;
      for (unsigned i = 0; i < largo; i++) {
@@ -417,9 +419,9 @@ void pruebas_hash_catedra()
     prueba_hash_borrar();
     prueba_hash_clave_vacia();
     prueba_hash_valor_null();
-    prueba_hash_volumen(1000, true);
+    prueba_hash_volumen(15000, true);
     prueba_hash_iterar();
-    prueba_hash_iterar_volumen(1000);
+    prueba_hash_iterar_volumen(15000);
 }
 
  void pruebas_volumen_catedra(size_t largo)

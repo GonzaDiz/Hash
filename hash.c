@@ -4,7 +4,7 @@
 #include <string.h>
 #include "hash.h"
 
-#define TAMANIO_INICIAL 200
+#define TAMANIO_INICIAL 199
 
 typedef enum estado{OCUPADO, VACIO ,BORRADO} estado_t;
 
@@ -30,20 +30,18 @@ struct hash_iter{
    *                  HASHING			 	    	   *
   *****************************************************/
 size_t hashing (const char *str, size_t tam) {
-        size_t hash = 5381;
-        int c;
-        while ((c = (*str++)))
-            hash = ((hash << 5) + hash) + c; /* hash * 33 + c */
+	unsigned long hash = 5831;
+    unsigned int c;
+    while ((c = (*str++)))
+        hash = ((hash << 5) + hash) + c; // hash * 33 + c 
 
-        return hash % tam;
+    return hash % tam;
 }
-
  /******************************************************
    *             FUNCIONES AUXILIARES  	    		   *
   *****************************************************/
 
 campo_hash_t* crear_tabla (size_t tam){
-
 	campo_hash_t* tabla = malloc((tam)*sizeof(campo_hash_t));
 	if (tabla == NULL) return NULL;
 	campo_hash_t campo;
@@ -53,12 +51,10 @@ campo_hash_t* crear_tabla (size_t tam){
 		campo.estado = VACIO;
 		tabla[i] = campo;
 	}
-
 	return tabla;
 }
 
 size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave){
-
 	while (tabla[posicion].estado != VACIO){
 		if (tabla[posicion].estado == OCUPADO){
 			if (strcmp(tabla[posicion].clave,clave) == 0){
@@ -71,17 +67,17 @@ size_t obtener_posicion(campo_hash_t* tabla, size_t posicion, const char *clave)
 }
 
 hash_t* redim_hash(hash_t* hash, size_t tamanioNuevo){
-
 	hash_iter_t* iter = hash_iter_crear(hash);
 	if (iter == NULL) return NULL;
 	campo_hash_t* tabla = crear_tabla(tamanioNuevo); 
 	if (tabla == NULL) return NULL;
 
+	size_t posicion=0, len=0;
 	while (!hash_iter_al_final(iter)){
-		size_t posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
+		posicion = obtener_posicion(tabla,hashing(hash_iter_ver_actual(iter),tamanioNuevo),hash_iter_ver_actual(iter));
 		tabla[posicion].estado=OCUPADO;
 		tabla[posicion].dato=hash_obtener(hash,hash_iter_ver_actual(iter));
-		size_t len = strlen(hash_iter_ver_actual(iter));
+		len = strlen(hash_iter_ver_actual(iter));
 		tabla[posicion].clave = malloc(1+len);
 		memcpy(tabla[posicion].clave,hash_iter_ver_actual(iter),len);
 		tabla[posicion].clave[len] = '\0';
@@ -130,7 +126,7 @@ hash_t *hash_crear(hash_destruir_dato_t destruir_dato){
 
 bool hash_guardar(hash_t *hash, const char *clave, void *dato){
 
-	if(hash->cantidad > hash->tam * 60 / 100) redim_hash(hash,hash->tam * 2);
+	if(hash->cantidad > hash->tam * 70 / 100) redim_hash(hash,hash->tam * 2);
 	size_t posicion = obtener_posicion(hash->tabla,hashing(clave,hash->tam),clave);
 	
 	if (hash->tabla[posicion].estado == OCUPADO){
